@@ -1,0 +1,67 @@
+{"files":{
+"1":{"md5":"7474cb5edd0d5a9297390e34a412861a.jpg","title":"field"},
+"2":{"md5":"1bb6671cd97db8ee48a5eb686d7d5ed2.jpg","title":"icons"},
+"3":{"md5":"63f915b97f1558704e6abc9df3a106af.jpg","title":"jtn"},
+"4":{"md5":"3ba5b47f0f4526cf8c085d2d3969c35a.jpg","title":"metal"},
+"5":{"md5":"bf1965d861c5763117e5d55bccbb8e3c.jpg","title":"paris"},
+"6":{"md5":"e5d006047b6eddd6f587d23e32e0534b.jpg","title":"watoto"},
+"7":{"md5":"41141fd3af31fefcca37cf05ff5193b0.jpg","title":"winter"},
+"8":{"md5":"71e225872327c4333d8e14c8c2c9b78b.jpg","title":"cookie monster"}
+
+},
+    "sliders": {
+        "default": {
+            "id": "default",
+            "published": true,
+            "thumbnails": false,
+            "slides": [{
+                "updated": "2015-09-20T10:34:07.899Z",
+                "duration": 8,
+                "file_id": "1"
+            }, {
+                "updated": "2015-09-21T14:46:54.048Z",
+                "duration": 8,
+                "file_id": "2"
+            }, {
+                "updated": "2015-09-21T10:00:22.953Z",
+                "duration": 8,
+                "file_id": "3"
+            }, {
+                "updated": "2015-09-21T09:59:41.084Z",
+                "duration": 8,
+                "file_id": "5"
+            }, {
+                "updated": "2015-09-21T14:34:41.969Z",
+                "duration": 8,
+                "file_id": "4"
+            }, {
+                "updated": "2015-09-22T15:14:42.648Z",
+                "duration": 5,
+                "file_id": "7"
+            }, {
+                "updated": "2015-09-23T08:50:03.458Z.jpg",
+                "duration": 5,
+                "file_id": "6"
+            }]
+        },
+        "dydland": {
+            "id": "dydland",
+            "published": true,
+            "thumbnails": false,
+            "slides": [{
+                "updated": "2015-09-20T10:33:24.900Z",
+                "duration": 5,
+                "file_id": "8"
+            }, {
+                "updated": "2015-09-20T10:33:24.900Z",
+                "duration": 5,
+                "file_id": "2"
+            }, {
+                "updated": "2015-09-20T10:49:39.112Z",
+                "duration": 5,
+                "file_id": "1"
+            }]
+        }
+    },
+    "updated": 1443005740
+}

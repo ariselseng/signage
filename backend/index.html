@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Signage editor</title>
+    <!-- Bootstrap -->
+    <link href="bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="css/selectize.bootstrap3.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+    .btn-file {
+    position: relative;
+    overflow: hidden;
+    }
+    .btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+    }
+    .input-group {
+    width: 100%;
+    }
+    .container{width:1280px;max-width: 100%;}
+    </style>
+    <script type="text/template" id="sliderTemplate">
+    <h1 class="page-header">Slider: <a href="/?slider={{slider.id}}&res=1920&transition=slide"> {{slider.id}}</a>
+       {{#slider.id}}<button type="button" style="float:right;margin:5px;" onclick="signageEditorApp.saveSlider('{{slider.id}}');"  class="btn btn-default">Save as copy</button>{{/slider.id}}
+      <button type="button" style="float:right;margin:5px;" onclick="signageEditorApp.saveSlider();"  class="btn btn-success">Save</button>
+    </h1>
+    
+    <div class="row placeholders">
+      <div class="col-xs-2">
+        <h4>Id</h4>
+        <input type="hidden" id="originalSliderId" value="{{slider.id}}" />
+        <input id="sliderId" value="{{slider.id}}" class="form-control" />
+      </div>
+      <div class="col-xs-1">
+        <h4>Thumbs</h4>
+        <input id="thumbnails" {{#slider.thumbnails}} checked="checked"{{/slider.thumbnails}} type="checkbox" class="checkbox" />
+      </div>
+      <div class="col-xs-1">
+        <h4>Published</h4>
+        <input id="published" {{#slider.published}} checked="checked"{{/slider.published}} type="checkbox" class="checkbox" />
+      </div>
+      <div class="col-xs-1" style="float:right">
+        
+        <!-- I<button type="button" onclick="destroySlider(this);" class="btn btn-xs btn-danger">Remove Slider</button> -->
+        
+      </div>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="table table-striped border">
+        <thead>
+          <tr>
+            <th style="width:1%"></th>
+            <th style="width:10%">Preview</th>
+            <th style="width:10%">File</th>
+            <th style="width:10%">Duration</th>
+            <th style="width:10%">Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          {{#slider.slides}}
+          {{{slidemarkup}}}
+          {{/slider.slides}}
+        </tbody>
+      </table>
+    </div>
+    <div id="btngroup" class="bwtn-group">
+      <button type="button" onclick="signageEditorApp.addSlide();" class="btn btn-xs btn-primary">Add</button>
+      <button type="button" onclick="signageEditorApp.removeRow();"  class="btn btn-xs btn-danger">Remove</button>
+    </div>
+    <hr />
+    </script>
+    <script id="slideTemplate" type="text/template">
+    <tr id="row-{{slide.idx}}"><td><div class="index">{{slide.idx}}.</div><input name="checker" type="checkbox"></input></td>
+    <td>
+      <img class="preview" width="64px" height="auto" src="getImage.php?id={{slide.file_id}}&res=64x36" />
+    </td>
+    <td>
+      <select style="width:200px;" placeholder="Choose file..." class="fileselect" onchange="signageEditorApp.updateSlideImageInDom(this, this.value);">
+        <option value="">Choose file...</option>
+        {{#files}}
+        <option{{#selected}} selected="selected"{{/selected}} value="{{id}}">{{title}}</option>
+        {{/files}}
+      </select>
+      <input type="hidden" name="orginalStringifiedSlide" value="{{orginalStringifiedSlide}}" />
+    </td>
+    <td>
+    <div style="max-width:70px" class="input-group spinner">
+      <input type="text" class="form-control" name="duration" value="{{slide.duration}}">
+      <div class="input-group-btn-vertical">
+        <button class="btn btn-default" onclick="el = $(this).parent().parent().find('input');$(el).val(Number($(el).val()) + 1);" type="button"><i class="fa fa-caret-up"></i></button>
+        <button class="btn btn-default" onclick="el = $(this).parent().parent().find('input');$(el).val(Number($(el).val()) - 1);" type="button"><i class="fa fa-caret-down"></i></button>
+      </div>
+    </div>
+    </td>
+    <td><input type="hidden" name="id" value="{{slide.id}}" /><input type="hidden" name="updated" value="{{slide.updated}}" />{{slide.updated_humanized}}</td>
+  </tr>
+  </script>
+  <script type="text/template" id="filesTemplate">
+  <h1 class="page-header">Files
+  <button type="button" style="float:right;margin:5px;" onclick="signageEditorApp.saveFiles();"  class="btn btn-success">Save files</button>
+  <div style="display:inline;" class="input-group">
+    <span style="float:right;cursor:pointer;margin:5px;" class="btn btn-primary btn-file">
+      <span>Upload files</span>
+      <form enctype="multipart/form-data">
+        <input data-hasinput="false" type="file" class="form-control" multiple="true" onchange="signageEditorApp.uploadFiles();" name="image[]">
+      </form>
+    </span>
+  </div>
+  
+  </h1>
+  
+  
+  <div class="table-responsive">
+    <table class="table table-striped border">
+      <thead>
+        <tr>
+          <th style="width:1%"></th>
+          <th style="width:1%">ID</th>
+          <th style="width:10%">Preview</th>
+          <th style="width:10%">Title</th>
+          <th style="width:10%">Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        {{#files}}
+        <tr><td><input name="checker" type="checkbox"></input></td>
+        <td style="width:1%;">{{id}}</td>
+        <td><a title="{{md5}}" href="../files/src/{{md5}}"><img class="preview" width="96px" height="auto" src="getImage.php?id={{id}}&res=96x54" /></a></td>
+        <td><div class="input-group" style="max-width:200px;"><input class="form-control" value="{{title}}" type="text" name="title" placeholder="Title"/></div></td>
+        <td><input type="hidden" name="id" value="{{id}}" /><input type="hidden" name="md5" value="{{md5}}" /><input type="hidden" name="updated" value="{{updated}}" />{{updated_humanized}}<input type="hidden" name="originalFile" value="{{originalFile}}" /></td>
+      </tr>
+      {{/files}}
+    </tbody>
+  </table>
+</div>
+<div id="btngroup" class="bwtn-group">
+  <button type="button" onclick="signageEditorApp.removeRow();"  class="btn btn-xs btn-danger">Remove</button>
+</div>
+<hr />
+</script>
+<script id="slideTemplate" type="text/template">
+<tr><td><input name="checker" type="checkbox"></input></td>
+<td>
+  <img class="preview" width="64px" height="auto" src="getImage.php?id={{slide.file_id}}&res=64x36" />
+</td>
+<td><input style="width:15%" value="{{slide.duration}}" type="number" name="duration" placeholder="Seconds"/></td>
+<td><input type="hidden" name="id" value="{{slide.id}}" /><input type="hidden" name="updated" value="{{slide.updated}}" />{{slide.updated}}</td>
+<td>
+  <select class="fileselect" onchange="signageEditorApp.updateSlideImageInDom(this, this.value);">
+    {{#files}}
+    <option{{#selected}} selected="selected"{{/selected}} value="{{id}}">{{title}}</option>
+    {{/files}}
+  </select>
+  <input type="hidden" name="orginalStringifiedSlide" value="{{orginalStringifiedSlide}}" />
+</td>
+</tr>
+</script>
+<script type="text/template" id="slidersTemplate">
+<h1 class="page-header">Sliders
+  <button type="button" style="float:right;margin:5px;" onclick="location.hash = '/sliders/new'"  class="btn btn-primary">New slider</button>
+</h1>
+<div class="table-responsive">
+<table class="table table-striped border">
+  <thead>
+    <tr>
+      <th style="width:1%"></th>
+      <th style="width:1%">ID</th>
+      <th style="width:1%">Frontend</th>
+      <th style="width:10%">Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+    {{#sliders}}
+    <tr>
+      <td><input name="checker" type="checkbox"></input><input name="id" type="hidden" value="{{id}}"></input></td>
+      <td style="width:1%;"><a href="#/sliders/{{id}}">{{id}}</a></td>
+      <td style="width:1%;"><a href="/?slider={{id}}&res=1920&transition=slide"> Link</a></a></td>
+      <td>{{updated_humanized}}</td>
+    </tr>
+    {{/sliders}}
+  </tbody>
+</table>
+</div>
+<div id="btngroup" class="bwtn-group">
+  <button type="button" onclick="signageEditorApp.deleteSliders();"  class="btn btn-xs btn-danger">Remove</button>
+</div>
+<hr />
+</script>
+</head>
+<body>
+<div class="container ">
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Signage</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li id="linkSliders"><a href="#/sliders">Sliders <span class="sr-only">(current)</span></a></li>
+        <li id="linkFiles"><a href="#/files">Files</a></li>
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">User <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+      </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+  </div>
+  <div class="container ">
+    
+  </div>
+  
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="js/libs.min.js?ewfee"></script>
+  <script src="js/selectize.js?ewfe"></script>
+  <script src="js/moment.min.js?ewfe"></script>
+  <script src="js/mustache.min.js?ewfe"></script>
+  <script src="js/jquery.tablednd.js?ewfe"></script>
+  <script type='text/javascript' src='../libs/rlite-1.1.min.js'></script>
+  <script src="js/main.js?ewfes"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+</body>
+</html>
