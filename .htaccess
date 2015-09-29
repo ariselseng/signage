@@ -1,0 +1,5 @@
+<ifmodule mod_expires.c>
+	<filesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf|js)$">
+		Header set Cache-Control "max-age=0, must-revalidate"
+	</filesMatch>
+</ifmodule>
