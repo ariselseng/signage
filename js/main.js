@@ -4,7 +4,7 @@ $, window, Mustache, Rlite, alert, confirm, signageViewerApp
 var r = new Rlite();
 // Default route
 r.add('params', function (r) {
-  var data = {slider_id: "default", res: 1920, transition: "slide", animationSpeed: 2000};
+  var data = {slider_id: "default", res: 1920, transition: "slide", animationSpeed: 2000, updateTime: 30};
   if (r.params.slider !== undefined) {
     data.slider_id = r.params.slider;
   }
@@ -18,15 +18,20 @@ r.add('params', function (r) {
   if (r.params.animationSpeed !== undefined) {
     data.animationSpeed = r.params.animationSpeed;
   }
+  if (r.params.updateTime !== undefined && Number(r.params.updateTime) >= 10) {
+    data.updateTime = Number(r.params.updateTime);
+  }
   signageViewerApp.navigate(data);
 });
 
 var signageViewerApp = (function () {
   var self = {};
+  var ongoingUpdate = false;
   var templates = {};
   var lastUpdate = new Date();
   var lastCacheUpdate = new Date();
   var slider;
+  var updaterInterval
   var retrieveTemplates = function () {
     templates.slides = $("#slidesTemplate").html();
 
@@ -61,13 +66,15 @@ var signageViewerApp = (function () {
   };
   self.checkForUpdate = function (force) {
     var now = new Date();
-    if (now.getTime() - lastUpdate.getTime() >=  30 * 1000 || force) {
+    if (now.getTime() - lastUpdate.getTime() >=  updaterInterval * 1000 && !ongoingUpdate || force) {
       console.log("checkForUpdate, last update: " + (now.getTime() - lastUpdate.getTime()));
+      ongoingUpdate = true
       lastUpdate = new Date();
       $.ajax({
         async: true,
         url: getBasePath() + 'backend/json.php?slider=' + slider.id + '&t=' + new Date(slider.updated).getTime(),
         complete: function (e) {
+          ongoingUpdate = false
           if (e.status === 200) {
             self.updateCache(true);
           }
@@ -91,6 +98,7 @@ var signageViewerApp = (function () {
       params.transition = "fade";
       params.animationSpeed = 2000;
     }
+    updaterInterval = params.updateTime
     var i = 0;
     var starterSlide = 0;
     if (slider.slides.length > 0) {
@@ -157,6 +165,9 @@ var signageViewerApp = (function () {
               if (window.localStorage !== undefined && window.localStorage !== null) {
                 window.localStorage.setItem('currentSlide-' + params.slider_id, slider.currentSlide);
               }
+              self.checkForUpdate();
+              
+
               self.checkForUpdate();
               // grab the duration to show this slide
               slider.vars.slideshowSpeed = $(slider.slides[slider.currentSlide]).data('duration');
