@@ -4,13 +4,14 @@ $, window, Mustache, Rlite, alert, confirm, signageViewerApp
 var r = new Rlite();
 // Default route
 r.add('params', function (r) {
-  var data = {slider_id: "default", res: 1920, transition: "slide", animationSpeed: 700};
+  var data = {slider_id: "default", res: 1920, transition: "slide", animationSpeed: 2000};
   if (r.params.slider !== undefined) {
     data.slider_id = r.params.slider;
   }
   if (r.params.transition !== undefined) {
     data.transition = r.params.transition;
   }
+
   if (r.params.res !== undefined) {
     data.res = r.params.res;
   }
@@ -35,15 +36,17 @@ var signageViewerApp = (function () {
     return "";
   };
 
-  var retrieveData = function (sliderId) {
+  var retrieveData = function (sliderId, callback) {
     $.ajax({
-      async: false,
+      async: true,
       url: getBasePath() + 'backend/json.php?getSlider=' + sliderId,
       type: 'GET'
     }).done(function (data) {
       slider = data.data.slider;
+      if (callback !== undefined) {
+        callback()
+      }
     });
-    return slider;
 
   };
 
@@ -58,12 +61,12 @@ var signageViewerApp = (function () {
   };
   self.checkForUpdate = function (force) {
     var now = new Date();
-    if (now.getTime() - lastUpdate.getTime() >=  16 * 1000 || force) {
+    if (now.getTime() - lastUpdate.getTime() >=  30 * 1000 || force) {
       console.log("checkForUpdate, last update: " + (now.getTime() - lastUpdate.getTime()));
       lastUpdate = new Date();
       $.ajax({
         async: true,
-        url: getBasePath() + 'backend/json.php?slider=' + slider.id + '&t=' + slider.updated,
+        url: getBasePath() + 'backend/json.php?slider=' + slider.id + '&t=' + new Date(slider.updated).getTime(),
         complete: function (e) {
           if (e.status === 200) {
             self.updateCache(true);
@@ -84,10 +87,9 @@ var signageViewerApp = (function () {
     }
   };
   var loadContent = function (params) {
-    retrieveData(params.slider_id);
     if (params.transition === "none") {
       params.transition = "fade";
-      params.animationSpeed = 0;
+      params.animationSpeed = 2000;
     }
     var i = 0;
     var starterSlide = 0;
@@ -174,6 +176,7 @@ var signageViewerApp = (function () {
             controlNav: false,
             startAt: starterSlide,
             easing: "linear",
+            initDelay: 1000,
             animationLoop: true,
             slideshowSpeed: duration,
             slideshow: true,
@@ -202,11 +205,26 @@ var signageViewerApp = (function () {
 
           });
         }
+        window.flexSlider = $('#slider').data('flexslider');
+        setTimeout(function () {
+            if (!flexSlider.playing) {
+              $('#slider').flexslider("pause")
+              $('#slider').flexslider("play")
+            }
+        }, 2500)
       }
     }
   };
   self.navigate = function (params) {
-    loadContent(params);
+    retrieveData(params.slider_id, function() {
+      if (params.transition === "none") {
+        $("body").show()
+      } else {
+        $("body").fadeIn()
+        console.log("transition: " + params.transition)
+      }
+      loadContent(params);
+    });
   };
   self.processPath = function () {
     r.run("params" + window.location.search);
@@ -214,11 +232,11 @@ var signageViewerApp = (function () {
   self.start = function () {
     retrieveTemplates();
     self.processPath();
-    $("body").fadeIn();
+    // $("body").fadeIn();
     window.applicationCache.removeEventListener('noupdate', self.start);
     setTimeout(function () {
       signageViewerApp.checkForUpdate();
-    }, 30 * 1000);
+    }, 10 * 1000);
 
   };
   return self;
@@ -237,10 +255,10 @@ if (window.applicationCache !== undefined) {
 } else {
   clearTimeout(window.noAppCacheTimeout);
   signageViewerApp.start();
-  console.log("No offline support");
+  alert("No offline support.");
 }
 
-setInterval(function () {
-  signageViewerApp.updateCache();
-}, 12 * 60 * 60 * 1000);
-console.log("VERSION: 18");
+// setInterval(function () {
+//   signageViewerApp.updateCache();
+// }, 12 * 60 * 60 * 1000);
+console.log("VERSION: 19");
