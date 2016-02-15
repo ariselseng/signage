@@ -53,20 +53,10 @@ var signageEditorApp = (function () {
   };
   self.updateSlideImageInDom = function (el, file_id) {
     if (file_id.length > 0) {
-<<<<<<< HEAD
-      console.log(file_id);
-      var imageEl = $(el).parent().parent().find("img.preview")[0];
-      var url = $(imageEl).attr('src');
-      url = url.replace(url.match("id=[0-9]"), "id=" + file_id);
-
-      $(imageEl).attr('src', url);
-
-=======
       var imageEl = $(el).parent().parent().find("img.preview")[0];
       var url = $(imageEl).attr('src');
       url = url.replace(url.match("id=[0-9]*"), "id=" + file_id);
       $(imageEl).attr('src', url);
->>>>>>> sqllite3db
     }
   };
   var getArrayOfFiles = function (files, selected_id) {
@@ -84,17 +74,12 @@ var signageEditorApp = (function () {
     }
     return filesArray;
   };
-<<<<<<< HEAD
-  self.addSlide = function () {
-    console.log(data);
-=======
   var updateIndexNumbers = function () {
     $("tbody tr").each(function (index, el) {
       $(el).find(".index").text((index + 1) + ".");
     });
   };
   self.addSlide = function () {
->>>>>>> sqllite3db
     var slide = {file_id: 0, updated: new Date().toJSON(), duration: 8};
     var markup = Mustache.to_html(templates.slide, {
       files: getArrayOfFiles(data.files, slide.file_id),
@@ -117,11 +102,8 @@ var signageEditorApp = (function () {
         direction: 'asc'
       }
     });
-<<<<<<< HEAD
-=======
     updateIndexNumbers();
     $(".container table").tableDnDUpdate();
->>>>>>> sqllite3db
   };
   self.addFile = function () {
     console.log("addFile");
@@ -134,10 +116,7 @@ var signageEditorApp = (function () {
   var getSliderFromDom = function () {
     var slider = {};
     slider.id = $("#sliderId").val();
-<<<<<<< HEAD
-=======
     slider.title = $("#title").val();
->>>>>>> sqllite3db
     slider.orgId = $("#originalSliderId").val();
     slider.published = $("input#published").is(":checked");
     slider.thumbnails = $("input#thumbnails").is(":checked");
@@ -190,34 +169,21 @@ var signageEditorApp = (function () {
         url: getBasePath() + 'json.php?saveFiles',
         type: 'POST',
         data: {data: JSON.stringify({files: files})},
-<<<<<<< HEAD
-      }).success(function () {
-        window.location.reload();
-=======
       }).success(function (data) {
         console.log(data);
         // window.location.reload();
->>>>>>> sqllite3db
       }).error(function () {
         alert("There was a problem somewhere. Probably smart to reload.");
       });
     }
   };
-<<<<<<< HEAD
-  var getSelectedSliderIdsFromDom = function () {
-=======
   var getSelectedIdsFromDom = function () {
->>>>>>> sqllite3db
     var ids = [];
     $("input[name=checker]:checked").each(function () {
       ids.push($(this).parent().parent().find("input[name=id]").val());
     });
     return ids;
   };
-<<<<<<< HEAD
-  self.deleteSliders = function () {
-    var sliderIds = getSelectedSliderIdsFromDom();
-=======
   self.deleteFiles = function () {
     var fileIds = getSelectedIdsFromDom();
     console.log(fileIds);
@@ -242,7 +208,6 @@ var signageEditorApp = (function () {
   };
   self.deleteSliders = function () {
     var sliderIds = getSelectedIdsFromDom();
->>>>>>> sqllite3db
     var willContinue = confirm("Do you really want this?");
     if (willContinue === true) {
       console.log(sliderIds);
@@ -297,21 +262,12 @@ var signageEditorApp = (function () {
     if (customId !== undefined) {
       slider.orgId = "newSlider";
     }
-<<<<<<< HEAD
-    if (slider.id.length > 0 && slider.id === "new") {
-      alert("Illegal ID");
-    } else if (slider.id.length > 0) {
-      willContinue = confirm("Do you really want this?");
-    } else {
-      alert("You need a ID for your slider.");
-=======
     if (slider.title.length > 0 && slider.id === "new") {
       alert("Need a title");
     } else if (slider.title.length > 0) {
       willContinue = confirm("Do you really want this?");
     } else {
       alert("You need a title for your slider.");
->>>>>>> sqllite3db
     }
 
     if (willContinue === true) {
@@ -331,11 +287,6 @@ var signageEditorApp = (function () {
       });
     }
   };
-<<<<<<< HEAD
-  var loadSlider = function (params) {
-    var content = {};
-    if (params.content === undefined) {
-=======
 
   var loadSlider = function (params) {
     var content = {};
@@ -343,7 +294,6 @@ var signageEditorApp = (function () {
       content = getData([{type: "files"}]);
       content.slider = {};
     } else {
->>>>>>> sqllite3db
       content = getData([{type: "slider", id: params.id}, {type: "files"}]);
     }
     var index = 1;
@@ -367,17 +317,7 @@ var signageEditorApp = (function () {
         direction: 'asc'
       }
     });
-<<<<<<< HEAD
-    $(".container table").tableDnD({
-      onDrop: function () {
-        $("tbody tr").each(function (index, el) {
-          $(el).find(".index").text((index + 1) + ".");
-        });
-      }
-    });
-=======
     $(".container table").tableDnD({onDrop: updateIndexNumbers});
->>>>>>> sqllite3db
   };
   var loadSliders = function () {
     var content = getData([{type: "sliders"}, {type: "files"}]);

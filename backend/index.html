@@ -42,11 +42,7 @@
     .container{width:1280px;max-width: 100%;}
     </style>
     <script type="text/template" id="sliderTemplate">
-<<<<<<< HEAD
-    <h1 class="page-header">Slider: <a href="/?slider={{slider.id}}&res=1920&transition=slide"> {{slider.id}}</a>
-=======
     <h1 class="page-header">Slider: <a href="/?slider={{slider.id}}&res=1920&transition=slide"> {{slider.title}}</a>
->>>>>>> sqllite3db
        {{#slider.id}}<button type="button" style="float:right;margin:5px;" onclick="signageEditorApp.saveSlider('{{slider.id}}');"  class="btn btn-default">Save as copy</button>{{/slider.id}}
       <button type="button" style="float:right;margin:5px;" onclick="signageEditorApp.saveSlider();"  class="btn btn-success">Save</button>
     </h1>
@@ -55,16 +51,12 @@
       <div class="col-xs-2">
         <h4>Id</h4>
         <input type="hidden" id="originalSliderId" value="{{slider.id}}" />
-<<<<<<< HEAD
-        <input id="sliderId" value="{{slider.id}}" class="form-control" />
-=======
         <input id="sliderId" value="{{slider.id}}" disabled="disabled" class="form-control" />
       </div>
       <div class="col-xs-2">
         <h4>Title</h4>
         <input type="hidden" id="originalTitle" value="{{slider.title}}" />
         <input id="title" value="{{slider.title}}" class="form-control" />
->>>>>>> sqllite3db
       </div>
       <div class="col-xs-1">
         <h4>Thumbs</h4>
@@ -109,11 +101,7 @@
     <script id="slideTemplate" type="text/template">
     <tr id="row-{{slide.idx}}"><td><div class="index">{{slide.idx}}.</div><input name="checker" type="checkbox"></input></td>
     <td>
-<<<<<<< HEAD
-      <img class="preview" width="64px" height="auto" src="getImage.php?id={{slide.file_id}}&res=64x36" />
-=======
       <img class="preview" width="64px" height="36px" src="getImage.php?id={{slide.file_id}}&res=64x36" />
->>>>>>> sqllite3db
     </td>
     <td>
       <select style="width:200px;" placeholder="Choose file..." class="fileselect" onchange="signageEditorApp.updateSlideImageInDom(this, this.value);">
@@ -167,11 +155,7 @@
         {{#files}}
         <tr><td><input name="checker" type="checkbox"></input></td>
         <td style="width:1%;">{{id}}</td>
-<<<<<<< HEAD
-        <td><a title="{{md5}}" href="../files/src/{{md5}}"><img class="preview" width="96px" height="auto" src="getImage.php?id={{id}}&res=96x54" /></a></td>
-=======
         <td><a title="{{md5}}" href="../files/src/{{md5}}"><img class="preview" width="64px" height="36px" src="getImage.php?id={{id}}&res=64x36" /></a></td>
->>>>>>> sqllite3db
         <td><div class="input-group" style="max-width:200px;"><input class="form-control" value="{{title}}" type="text" name="title" placeholder="Title"/></div></td>
         <td><input type="hidden" name="id" value="{{id}}" /><input type="hidden" name="md5" value="{{md5}}" /><input type="hidden" name="updated" value="{{updated}}" />{{updated_humanized}}<input type="hidden" name="originalFile" value="{{originalFile}}" /></td>
       </tr>
@@ -180,22 +164,14 @@
   </table>
 </div>
 <div id="btngroup" class="bwtn-group">
-<<<<<<< HEAD
-  <button type="button" onclick="signageEditorApp.removeRow();"  class="btn btn-xs btn-danger">Remove</button>
-=======
   <button type="button" onclick="signageEditorApp.deleteFiles();"  class="btn btn-xs btn-danger">Remove</button>
->>>>>>> sqllite3db
 </div>
 <hr />
 </script>
 <script id="slideTemplate" type="text/template">
 <tr><td><input name="checker" type="checkbox"></input></td>
 <td>
-<<<<<<< HEAD
-  <img class="preview" width="64px" height="auto" src="getImage.php?id={{slide.file_id}}&res=64x36" />
-=======
   <img class="preview" width="64px" height="36px" src="getImage.php?id={{slide.file_id}}&res=64x36" />
->>>>>>> sqllite3db
 </td>
 <td><input style="width:15%" value="{{slide.duration}}" type="number" name="duration" placeholder="Seconds"/></td>
 <td><input type="hidden" name="id" value="{{slide.id}}" /><input type="hidden" name="updated" value="{{slide.updated}}" />{{slide.updated}}</td>
@@ -219,10 +195,7 @@
     <tr>
       <th style="width:1%"></th>
       <th style="width:1%">ID</th>
-<<<<<<< HEAD
-=======
       <th style="width:1%">Title</th>
->>>>>>> sqllite3db
       <th style="width:1%">Frontend</th>
       <th style="width:10%">Updated</th>
     </tr>
@@ -233,10 +206,7 @@
     <tr>
       <td><input name="checker" type="checkbox"></input><input name="id" type="hidden" value="{{id}}"></input></td>
       <td style="width:1%;"><a href="#/sliders/{{id}}">{{id}}</a></td>
-<<<<<<< HEAD
-=======
       <td style="width:1%;"><a href="#/sliders/{{id}}">{{title}}</a></td>
->>>>>>> sqllite3db
       <td style="width:1%;"><a href="/?slider={{id}}&res=1920&transition=slide"> Link</a></a></td>
       <td>{{updated_humanized}}</td>
     </tr>
