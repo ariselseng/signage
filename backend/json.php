@@ -42,6 +42,21 @@ function getSliders() {
 	return $slidersArray;
 }
 
+function getSliderByTitle($id) {
+	$slider = R::findOne('slider', 'title = ?', [$id]);
+	if (is_null($slider)) {
+		http_response_code(404);
+		return null;
+	}
+	$sliderArray = $slider->export();
+	$sliderArray['published'] = (bool)$slider->published;
+	$sliderArray['thumbnails'] = (bool)$slider->thumbnails;
+	$sliderArray['slides'] = array();
+	foreach ($slider->xownSlideList as $key => $slide) {
+		$sliderArray['slides'][] = R::findOne('slide', 'id = ?', [$key])->export();
+	}
+	return $sliderArray;
+}
 function getSliderById($id) {
 	$slider = R::findOne('slider', 'id = ?', [$id]);
 	if (is_null($slider)) {
@@ -67,7 +82,14 @@ if (isset($_GET['getSliders'])) {
 }
 
 if (isset($_GET['getSlider'])) {
-	$returnarray["data"]['slider'] = getSliderById($_GET['getSlider']);
+	if (is_int($_GET['getSlider'])){
+		$returnarray["data"]['slider'] = getSliderById($_GET['getSlider']);
+	} else {
+		$returnarray["data"]['slider'] = getSliderByTitle($_GET['getSlider']);
+	}
+}
+if (isset($_GET['getSliderByTitle'])) {
+	$returnarray["data"]['slider'] = getSliderByTitle($_GET['getSliderByTitle']);
 }
 
 if (isset($_GET['uploadFiles'])) {
