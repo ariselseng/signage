@@ -1,11 +1,11 @@
 <?php
-// $dataFile = $_SERVER['DOCUMENT_ROOT'] . "/backend/data.json";
-// $data = json_decode(file_get_contents($dataFile), true);
-$filesDir = $_SERVER['DOCUMENT_ROOT'] . "/files";
+
+$baseDir = dirname(dirname(__FILE__));
+$filesDir = $baseDir . "/files";
 $srcFilesDir = $filesDir . "/src";
 $resizedDir = $filesDir . "/resized";
-require "libs/RedBeanPHP/rb.php";
-R::setup( 'sqlite:db.sqlite' );
+require $baseDir . "/backend/libs/RedBeanPHP/rb.php";
+R::setup( 'sqlite:' . $baseDir . '/backend/db.sqlite' );
 function resizeAndCrop($originalImage, $newImage, $newWidth, $newHeight = 0){
 	$im = new imagick($originalImage);
 	$im->setResourceLimit(6, 1);

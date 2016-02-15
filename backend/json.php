@@ -1,10 +1,11 @@
 <?php
+$baseDir = dirname(dirname(__FILE__));
 ini_set('display_errors',1);
 ini_set('display_startup_errors',1);
 error_reporting(-1);
 $returnarray = array("data" => array());
-require "libs/RedBeanPHP/rb.php";
-R::setup( 'sqlite:db.sqlite' );
+require $baseDir . "/backend/libs/RedBeanPHP/rb.php";
+R::setup( 'sqlite:' . $baseDir . '/backend/db.sqlite' );
 function delTree($dir) {
    $files = array_diff(scandir($dir), array('.','..'));
     foreach ($files as $file) {
@@ -96,7 +97,10 @@ if (isset($_GET['uploadFiles'])) {
 
 	$returnarray['newfiles'] = array();
 	$returnarray['debug'] = $_FILES;
-	$imgRoot = $_SERVER['DOCUMENT_ROOT'] . "/files/src";
+	$imgRoot = $baseDir . "/files/src";
+	if (!file_exists($imgRoot)):
+		mkdir($imgRoot, 0755, true);
+	endif;
 	foreach ($_FILES['image']['tmp_name'] as $key => $newfile):
 		$tmpimage = $newfile;
 		$md5sum = md5_file($tmpimage);

@@ -1,13 +1,13 @@
 <?php
+$baseDir = dirname(__FILE__);
 header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() - (60 * 60)));
 date_default_timezone_set("Europe/Oslo");
 header("Content-Type: text/cache-manifest");
-require "backend/libs/RedBeanPHP/rb.php";
-R::setup( 'sqlite:backend/db.sqlite' );
-
-$dataFile = $_SERVER['DOCUMENT_ROOT'] . "/backend/db.sqlite";
+require $baseDir . "/backend/libs/RedBeanPHP/rb.php";
+R::setup( 'sqlite:'. $baseDir . '/backend/db.sqlite' );
+$dataFile = $baseDir . "/backend/db.sqlite";
 $data = array("res" => 1920, "manifest_files" => array(), "manifest_images" => array());
-$data['version'] = filemtime($dataFile) . filemtime($_SERVER['DOCUMENT_ROOT'] . "/index.html") . filemtime($_SERVER['DOCUMENT_ROOT'] . "/js/main.js");
+$data['version'] = filemtime($dataFile) . filemtime($baseDir . "/index.html") . filemtime($baseDir . "/js/main.js");
 $content = json_decode(file_get_contents($dataFile), true);
 function getSliderById($id) {
 	$slider = R::findOne('slider', 'id = ?', [$id]);
