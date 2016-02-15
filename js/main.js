@@ -4,7 +4,7 @@ $, window, Mustache, Rlite, alert, confirm, signageViewerApp
 var r = new Rlite();
 // Default route
 r.add('params', function (r) {
-  var data = {slider_id: "default", res: 1920, transition: "slide", animationSpeed: 2000, updateTime: 30};
+  var data = {slider_id: "default", res: 1920, transition: "slide", animationSpeed: 700, updateTime: 30};
   if (r.params.slider !== undefined) {
     data.slider_id = r.params.slider;
   }
