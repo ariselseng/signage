@@ -4,28 +4,50 @@ $, window, Mustache, Rlite, alert, confirm, signageViewerApp
 var r = new Rlite();
 // Default route
 r.add('params', function (r) {
+<<<<<<< HEAD
   var data = {slider_id: "default", res: 1920, transition: "slide", animationSpeed: 700};
+=======
+  var data = {slider_id: "default", res: 1920, transition: "slide", animationSpeed: 700, updateTime: 30};
+>>>>>>> sqllite3db
   if (r.params.slider !== undefined) {
     data.slider_id = r.params.slider;
   }
   if (r.params.transition !== undefined) {
     data.transition = r.params.transition;
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> sqllite3db
   if (r.params.res !== undefined) {
     data.res = r.params.res;
   }
   if (r.params.animationSpeed !== undefined) {
     data.animationSpeed = r.params.animationSpeed;
   }
+<<<<<<< HEAD
+=======
+  if (r.params.updateTime !== undefined && Number(r.params.updateTime) >= 10) {
+    data.updateTime = Number(r.params.updateTime);
+  }
+>>>>>>> sqllite3db
   signageViewerApp.navigate(data);
 });
 
 var signageViewerApp = (function () {
   var self = {};
+<<<<<<< HEAD
+=======
+  var ongoingUpdate = false;
+>>>>>>> sqllite3db
   var templates = {};
   var lastUpdate = new Date();
   var lastCacheUpdate = new Date();
   var slider;
+<<<<<<< HEAD
+=======
+  var updaterInterval
+>>>>>>> sqllite3db
   var retrieveTemplates = function () {
     templates.slides = $("#slidesTemplate").html();
 
@@ -35,15 +57,28 @@ var signageViewerApp = (function () {
     return "";
   };
 
+<<<<<<< HEAD
   var retrieveData = function (sliderId) {
     $.ajax({
       async: false,
+=======
+  var retrieveData = function (sliderId, callback) {
+    $.ajax({
+      async: true,
+>>>>>>> sqllite3db
       url: getBasePath() + 'backend/json.php?getSlider=' + sliderId,
       type: 'GET'
     }).done(function (data) {
       slider = data.data.slider;
+<<<<<<< HEAD
     });
     return slider;
+=======
+      if (callback !== undefined) {
+        callback()
+      }
+    });
+>>>>>>> sqllite3db
 
   };
 
@@ -58,6 +93,7 @@ var signageViewerApp = (function () {
   };
   self.checkForUpdate = function (force) {
     var now = new Date();
+<<<<<<< HEAD
     if (now.getTime() - lastUpdate.getTime() >=  16 * 1000 || force) {
       console.log("checkForUpdate, last update: " + (now.getTime() - lastUpdate.getTime()));
       lastUpdate = new Date();
@@ -65,6 +101,17 @@ var signageViewerApp = (function () {
         async: true,
         url: getBasePath() + 'backend/json.php?slider=' + slider.id + '&t=' + slider.updated,
         complete: function (e) {
+=======
+    if (now.getTime() - lastUpdate.getTime() >=  updaterInterval * 1000 && !ongoingUpdate || force) {
+      console.log("checkForUpdate, last update: " + (now.getTime() - lastUpdate.getTime()));
+      ongoingUpdate = true
+      lastUpdate = new Date();
+      $.ajax({
+        async: true,
+        url: getBasePath() + 'backend/json.php?slider=' + slider.id + '&t=' + new Date(slider.updated).getTime(),
+        complete: function (e) {
+          ongoingUpdate = false
+>>>>>>> sqllite3db
           if (e.status === 200) {
             self.updateCache(true);
           }
@@ -84,11 +131,19 @@ var signageViewerApp = (function () {
     }
   };
   var loadContent = function (params) {
+<<<<<<< HEAD
     retrieveData(params.slider_id);
     if (params.transition === "none") {
       params.transition = "fade";
       params.animationSpeed = 0;
     }
+=======
+    if (params.transition === "none") {
+      params.transition = "fade";
+      params.animationSpeed = 0; //this makes it not transition.
+    }
+    updaterInterval = params.updateTime
+>>>>>>> sqllite3db
     var i = 0;
     var starterSlide = 0;
     if (slider.slides.length > 0) {
@@ -156,6 +211,12 @@ var signageViewerApp = (function () {
                 window.localStorage.setItem('currentSlide-' + params.slider_id, slider.currentSlide);
               }
               self.checkForUpdate();
+<<<<<<< HEAD
+=======
+              
+
+              self.checkForUpdate();
+>>>>>>> sqllite3db
               // grab the duration to show this slide
               slider.vars.slideshowSpeed = $(slider.slides[slider.currentSlide]).data('duration');
               // start the interval
@@ -174,6 +235,10 @@ var signageViewerApp = (function () {
             controlNav: false,
             startAt: starterSlide,
             easing: "linear",
+<<<<<<< HEAD
+=======
+            initDelay: 1000,
+>>>>>>> sqllite3db
             animationLoop: true,
             slideshowSpeed: duration,
             slideshow: true,
@@ -202,11 +267,33 @@ var signageViewerApp = (function () {
 
           });
         }
+<<<<<<< HEAD
+=======
+        window.flexSlider = $('#slider').data('flexslider');
+        setTimeout(function () {
+            if (!flexSlider.playing) {
+              $('#slider').flexslider("pause")
+              $('#slider').flexslider("play")
+            }
+        }, 2500)
+>>>>>>> sqllite3db
       }
     }
   };
   self.navigate = function (params) {
+<<<<<<< HEAD
     loadContent(params);
+=======
+    retrieveData(params.slider_id, function() {
+      if (params.transition === "none") {
+        $("body").show()
+      } else {
+        $("body").fadeIn()
+        console.log("transition: " + params.transition)
+      }
+      loadContent(params);
+    });
+>>>>>>> sqllite3db
   };
   self.processPath = function () {
     r.run("params" + window.location.search);
@@ -214,11 +301,19 @@ var signageViewerApp = (function () {
   self.start = function () {
     retrieveTemplates();
     self.processPath();
+<<<<<<< HEAD
     $("body").fadeIn();
     window.applicationCache.removeEventListener('noupdate', self.start);
     setTimeout(function () {
       signageViewerApp.checkForUpdate();
     }, 30 * 1000);
+=======
+    // $("body").fadeIn();
+    window.applicationCache.removeEventListener('noupdate', self.start);
+    setTimeout(function () {
+      signageViewerApp.checkForUpdate();
+    }, 10 * 1000);
+>>>>>>> sqllite3db
 
   };
   return self;
@@ -237,6 +332,7 @@ if (window.applicationCache !== undefined) {
 } else {
   clearTimeout(window.noAppCacheTimeout);
   signageViewerApp.start();
+<<<<<<< HEAD
   console.log("No offline support");
 }
 
@@ -244,3 +340,12 @@ setInterval(function () {
   signageViewerApp.updateCache();
 }, 12 * 60 * 60 * 1000);
 console.log("VERSION: 18");
+=======
+  alert("No offline support.");
+}
+
+// setInterval(function () {
+//   signageViewerApp.updateCache();
+// }, 12 * 60 * 60 * 1000);
+console.log("VERSION: 20");
+>>>>>>> sqllite3db

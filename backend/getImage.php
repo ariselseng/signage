@@ -1,10 +1,21 @@
 <?php
+<<<<<<< HEAD
 $dataFile = $_SERVER['DOCUMENT_ROOT'] . "/backend/data.json";
 $data = json_decode(file_get_contents($dataFile), true);
 $filesDir = $_SERVER['DOCUMENT_ROOT'] . "/files";
 $srcFilesDir = $filesDir . "/src";
 $resizedDir = $filesDir . "/resized";
 function resizeAndCrop($originalImage,$newImage,$newWidth,$newHeight = 0){
+=======
+
+$baseDir = dirname(dirname(__FILE__));
+$filesDir = $baseDir . "/files";
+$srcFilesDir = $filesDir . "/src";
+$resizedDir = $filesDir . "/resized";
+require $baseDir . "/backend/libs/RedBeanPHP/rb.php";
+R::setup( 'sqlite:' . $baseDir . '/backend/db.sqlite' );
+function resizeAndCrop($originalImage, $newImage, $newWidth, $newHeight = 0){
+>>>>>>> sqllite3db
 	$im = new imagick($originalImage);
 	$im->setResourceLimit(6, 1);
 	$im->setImageCompression(imagick::COMPRESSION_JPEG);
@@ -35,8 +46,15 @@ if (isset($_GET['id']) && isset($_GET['res'])) {
 	if(is_null($height)){
 		$height = 0;
 	}
+<<<<<<< HEAD
 	if(isset($data['files'][$_GET['id']])):
 		$srcFileSum = $data['files'][$_GET['id']]['md5'];
+=======
+	$fileData = R::findOne( 'file', ' id = ? ', [$_GET['id']]);
+
+	if(!is_null($fileData)):
+		$srcFileSum = $fileData->md5;
+>>>>>>> sqllite3db
 		$wantedFile = $resizedDir . "/" . $srcFileSum . "/" . $_GET['res'] . ".jpg";
 		$srcFile = $srcFilesDir . "/" . $srcFileSum;
 	else:
@@ -46,6 +64,10 @@ if (isset($_GET['id']) && isset($_GET['res'])) {
 	if (!file_exists($wantedFile) && file_exists($srcFile)) {
 		$resized = resizeAndCrop($srcFile, $wantedFile, $width, $height);
 	}
+<<<<<<< HEAD
+=======
+	$cheapChecksum = str_replace(".jpg", $width . "x" . $height, basename($srcFile));
+>>>>>>> sqllite3db
 	header("Cache-Control: max-age=0, must-revalidate");
 	header("Content-Type: image/jpeg");
 	header("Last-Modified: ".gmdate("D, d M Y H:i:s", filemtime($wantedFile))." GMT"); 
@@ -53,7 +75,12 @@ if (isset($_GET['id']) && isset($_GET['res'])) {
     //get the last-modified-date of this very file
 	$lastModified=filemtime($wantedFile);
 	//get a unique hash of this file (etag)
+<<<<<<< HEAD
 	$etagFile = md5_file($wantedFile);
+=======
+	// $etagFile = md5_file($wantedFile);
+	$etagFile = $cheapChecksum;
+>>>>>>> sqllite3db
 	//get the HTTP_IF_MODIFIED_SINCE header if set
 	$ifModifiedSince=(isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : false);
 	//get the HTTP_IF_NONE_MATCH header if set (etag: unique file hash)
