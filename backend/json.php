@@ -82,7 +82,7 @@ if (isset($_GET['getSliders'])) {
 }
 
 if (isset($_GET['getSlider'])) {
-	if (is_int($_GET['getSlider'])){
+	if (is_numeric($_GET['getSlider'])){
 		$returnarray["data"]['slider'] = getSliderById($_GET['getSlider']);
 	} else {
 		$returnarray["data"]['slider'] = getSliderByTitle($_GET['getSlider']);

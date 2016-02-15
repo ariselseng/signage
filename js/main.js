@@ -96,7 +96,7 @@ var signageViewerApp = (function () {
   var loadContent = function (params) {
     if (params.transition === "none") {
       params.transition = "fade";
-      params.animationSpeed = 2000;
+      params.animationSpeed = 0; //this makes it not transition.
     }
     updaterInterval = params.updateTime
     var i = 0;

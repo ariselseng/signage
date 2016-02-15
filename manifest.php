@@ -24,6 +24,21 @@ function getSliderById($id) {
 	}
 	return $sliderArray;
 }
+function getSliderByTitle($id) {
+	$slider = R::findOne('slider', 'title = ?', [$id]);
+	if (is_null($slider)) {
+		http_response_code(404);
+		return null;
+	}
+	$sliderArray = $slider->export();
+	$sliderArray['published'] = (bool)$slider->published;
+	$sliderArray['thumbnails'] = (bool)$slider->thumbnails;
+	$sliderArray['slides'] = array();
+	foreach ($slider->xownSlideList as $key => $slide) {
+		$sliderArray['slides'][] = R::findOne('slide', 'id = ?', [$key])->export();
+	}
+	return $sliderArray;
+}
 if (isset($_GET['res'])){
 	$data['res'] = $_GET['res'];
 }
@@ -33,7 +48,11 @@ if (isset($_GET['slider'])) {
 	$data['slider_name'] = "default";
 }
 $data['slider_folder'] = "slides/resized/" . $data['slider_name'];
-$data['slider_content'] = getSliderById($data['slider_name']);
+if (is_numeric($data['slider_name'])):
+	$data['slider_content'] = getSliderById($data['slider_name']);
+else:
+	$data['slider_content'] = getSliderByTitle($data['slider_name']);
+endif;
 $data['slider_slides_length'] = count($data['slider_content']['slides']);
 
 foreach ($data['slider_content']['slides'] as $key => $slide) {
