@@ -272,4 +272,4 @@ if (window.applicationCache !== undefined) {
 // setInterval(function () {
 //   signageViewerApp.updateCache();
 // }, 12 * 60 * 60 * 1000);
-console.log("VERSION: 19");
+console.log("VERSION: 20");
