@@ -1,12 +1,11 @@
 <?php
+$baseDir = dirname(dirname(__FILE__));
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('max_execution_time', 90);
 header("Content-Type: application/json");
 $returnarray = array('newfiles' => array());
-$imgRoot = $_SERVER['DOCUMENT_ROOT'] . "/files/src";
-
-
+$imgRoot = $baseDir . "/files/src";
 $returnarray['debug'] = $_FILES;
 foreach ($_FILES['image']['tmp_name'] as $key => $newfile):
 	$tmpimage = $newfile;
