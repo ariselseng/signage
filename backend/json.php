@@ -73,9 +73,20 @@ function getSliderById($id) {
 	}
 	return $sliderArray;
 }
+function meetsServerRequirements(){
+	$valid = false;
+	if (extension_loaded('imagick') || class_exists("Imagick")) {
+		$valid = true;
+	}
+	return $valid;
+}
 
 if (isset($_GET['getFiles'])) {
-	$returnarray["data"]['files'] = getFiles();
+	if (meetsServerRequirements()) {
+		$returnarray["data"]['files'] = getFiles();
+	} else {
+		$returnarray["errormsg"] = "The server doesn't meet the requirements.";
+	}
 }
 
 if (isset($_GET['getSliders'])) {

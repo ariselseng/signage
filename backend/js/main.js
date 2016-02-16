@@ -45,6 +45,9 @@ var signageEditorApp = (function () {
       type: 'GET'
     });
     data = response.responseJSON.data;
+    if (response.responseJSON.errormsg !== undefined) {
+      alert(response.responseJSON.errormsg);
+    }
     return response.responseJSON.data;
 
   };
